@@ -13,11 +13,9 @@ using namespace std;
 //  to make sure it is a or b.
 bool recognizer(string s) {
     if (s.empty()) return false;
-
     for (int i = 0; i < s.length(); i++) {
-        if (s[i] != 'a' && s[i] != 'b') return false;
+        if (s[i] != 'a' && s[i] != 'b') return false;   //using demorgans here  a or b -> !a and !b
     }
-
     return true;
 }
 // end of recognizer
@@ -28,7 +26,7 @@ bool recognizer(string s) {
 int main() {
     string current;
 
-    while (getline(cin, current)) {
+    while (getline(cin, current)) {     //just grab user input and run it through the recognizer 
         if (recognizer(current)) {
             cout << "YES IN L" << endl;
         }

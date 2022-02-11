@@ -2,7 +2,6 @@
 #include<string>
 #include<queue>
 using namespace std;
-// include queue.h or equivalent such as <queue>
 
 //----------------------------------------------
 // CS421 HW1 
@@ -14,26 +13,28 @@ using namespace std;
 
 bool recognizer(string s) {
     if (s.empty()) return false;
-
     for (int i = 0; i < s.length(); i++) {
-        if (s[i] != 'a' && s[i] != 'b') return false;
+        if (s[i] != 'a' && s[i] != 'b') return false;   //using demorgans here  a or b -> !a and !b
     }
-
     return true;
 }
 
-void generate(string current, char E[], int len, int perm) {
-    if (perm == 0) {
-        if (recognizer(current)) {
+//generate() will recursively create a string using the elements of E
+// each iteration of generate will produce all strings of size remLen
+// that can be created from E, remLen increases at the users discresion
+
+void generate(string current, char E[], int alphaSize, int remLen, queue<string> &gen) {
+    if (remLen == 0) {              //base case is remLen is zero
+        if (recognizer(current)) {  //once remLen is 0, check the current string with recognizer
             cout << current << endl;
-            
+            gen.push(current);      //only strings that pass validity check make it into queue
         }
         return;
     }
 
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < alphaSize; i++) {   //for each element of E, build the prefix with E[i]
         string currentPrefix = current + E[i];
-        generate(currentPrefix, E, len, perm - 1);
+        generate(currentPrefix, E, alphaSize, remLen - 1, gen); //decrease the remLen because we used E[i], need to build with E[i+1] next
     }
 
 }
@@ -50,15 +51,23 @@ void generate(string current, char E[], int len, int perm) {
 
 int main() {
     queue<string> generatedText;
-    char E[] = { 'a', 'b', 'c' };
-    int len = 3, perm = 1;
+    char E[] = {'a', 'b', 'c'};
+    int alphaSize = sizeof(E) / sizeof(E[0]), remLen = 1;
     string prefix = "", userInput;
+
     while (true) {
-        // generate a string
-        cout << "Enter any key to continue or -1 to exit." << endl;
+        cout << "Enter any key to continue or \"exit\" to exit." << endl;
         getline(cin, userInput);
-        if (userInput == "-1") return 0;
-        generate(prefix, E, len, perm++);
+        if (userInput == "exit") return 0;
+        /*
+        * Generate function takes following parameters:
+        *-string prefix (string)
+        *-alphabet E (char [])
+        *-size of E (int)
+        *-remaining length generated string (int)
+        *-address of the queue (queue<string> &)
+        */
+        generate(prefix, E, alphaSize, remLen++, generatedText);
     }// end of while
     return 0;
 }// end of main
